@@ -359,11 +359,44 @@ full_join(
 # https://anvil.works/blog/tidy-data
 
 
-# pivot_wider (spread)
-(deck_wide <-
-   deck %>%
-   pivot_wider(names_from = face, values_from = value))
+# more realistic examples - thanks Ash :-)
+# here we've measured participants at two time points (currently wide format)
+better_example <-
+  tribble(
+    ~id, ~sex, ~t1, ~t2,
+    "A", "F", 20, 5,
+    "B", "F", 15, 6,
+    "C", "M", 20, 8
+  )
 
+better_example %>%
+  pivot_longer(
+    cols = c(t1, t2), # or -c(id, sex)
+    names_to = "variable", 
+    values_to = "value"
+  )
+
+# if we make sex a numeric variable, we can pivot it too
+better_example2 <-
+  tribble(
+    ~id, ~sex, ~bmi, ~height,
+    "A", 0, 20, 5,
+    "B", 0, 15, 6,
+    "C", 1, 20, 8
+  )
+
+better_example2 %>%
+  pivot_longer(
+    cols = c(sex, bmi, height), # or -id
+    names_to = "variable", 
+    values_to = "value"
+  )
+
+
+# pivot_wider (spread) [not usually required but wanting an example dataset]
+(deck_wide <-
+    deck %>%
+    pivot_wider(names_from = face, values_from = value))
 
 # pivot_longer (gather)
 # use widen data to convert back!
@@ -371,6 +404,11 @@ full_join(
   deck_wide %>%
   pivot_longer(cols = -suit, names_to = "face", values_to = "value"))
 
+# how-to from help file:
+?pivot_longer
+relig_income
+relig_income %>%
+  pivot_longer(!religion, names_to = "income", values_to = "count")
 
 
 # ---- ggplot2 ----
@@ -380,7 +418,6 @@ full_join(
 # Aesthetics: aes() function selecting x, y, col, shape, fill
 # Geoms: layers for plot - what are we plotting (points, lines, tiles?)
 
-
 ### setup (OPTIONAL)
 # Scales: change how aesthetics look/are presented
 # Theme: change plot look from default
@@ -388,10 +425,10 @@ full_join(
 
 ### general ggplot2 call
 # ggplot(
-#   data = ..., 
+#   data = ...,
 #   aes(x = ..., ...)
 # ) +
-#   geom_xxxx() 
+#   geom_xxxx()
 
 
 # list of geoms etc:
@@ -412,7 +449,7 @@ ggplot(
   aes(x = value, y = new_value)
 ) +
   geom_point() +
-  theme_bw()
+  theme_classic()
 
 # scatterplot by name
 # ordering no good?
@@ -436,6 +473,7 @@ ordered_face_vals <-
 deck_long_spades$face <- 
   factor(deck_long_spades$face, levels = ordered_face_vals)
 
+deck_long_spades$face
 
 # scatterplot by name
 # better ordering now?
@@ -448,10 +486,12 @@ ggplot(
 
 
 # now let's use the full data to do fancier things!
-
 deck_long_for_plot <-
   deck_long %>%
-  mutate(new_value = ifelse(value > 10, value / 10, value * 2))
+  mutate(
+    new_value = ifelse(value > 10, value / 10, value * 2),
+    new_value = ifelse(suit == "hearts", 5 * new_value, new_value),
+  )
 
 deck_long_for_plot$face <- 
   factor(deck_long_for_plot$face, levels = ordered_face_vals)
@@ -466,7 +506,7 @@ ggplot(
   theme_bw()
 
 
-# let's add colour! what about shapes too
+# let's add colour! what about shapes too?
 ggplot(
   data = deck_long_for_plot, 
   aes(x = face, y = new_value, col = suit, shape = suit)
@@ -475,10 +515,10 @@ ggplot(
   theme_bw()
 
 
-# let's control the colour
+# let's control the colour and the shapes
 ggplot(
   data = deck_long_for_plot, 
-  aes(x = face, y = new_value, col = suit, shape = suit)
+  aes(x = face, y = new_value, color = suit, shape = suit)
 ) +
   geom_jitter() +
   scale_color_manual(
@@ -489,11 +529,23 @@ ggplot(
       "spades" = "grey50"
     )
   ) +
+  scale_shape_manual(
+    values = c(
+      "clubs" = "C",
+      "diamonds" = "D",
+      "hearts" = "H",
+      "spades" =  "S"
+    )
+  ) +
   theme_bw()
 
 
-
-
+# did someone say heatmap!?
+ggplot(
+  data = deck_long_for_plot, 
+  aes(x = face, y = suit, fill = new_value)
+) +
+  geom_tile() 
 
 
 
