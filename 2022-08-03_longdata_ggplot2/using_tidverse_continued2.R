@@ -468,7 +468,7 @@ ggplot(
 
 # let's add colour! what about shapes too
 ggplot(
-  data = deck_long_spades, 
+  data = deck_long_for_plot, 
   aes(x = face, y = new_value, col = suit, shape = suit)
 ) +
   geom_jitter() +
@@ -477,7 +477,7 @@ ggplot(
 
 # let's control the colour
 ggplot(
-  data = deck_long_spades, 
+  data = deck_long_for_plot, 
   aes(x = face, y = new_value, col = suit, shape = suit)
 ) +
   geom_jitter() +
