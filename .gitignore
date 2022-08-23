@@ -40,3 +40,7 @@ vignettes/*.pdf
 
 # get rid of html preview of README
 README.html
+
+# don't upload some data file
+2022-08-24_linear_regression/dat/Fairclough.csv
+
