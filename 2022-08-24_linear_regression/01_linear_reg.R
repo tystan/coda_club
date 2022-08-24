@@ -19,7 +19,7 @@
 # y_i = b0 + b1 x_i + e_i
 
 ### remind you of early high school maths?
-# y = m x + c  
+# y = m * x + c  
 # (just an equation of a straight line)
 
 ### here: 
@@ -30,16 +30,16 @@
 
 ### BUT NOTE all of these characters/letters are just place holders for whatever
 ### variables we are interested in, e.g.,
-# BMI              = (intercept) + (slope) x exercise_in_hours,    or
-# blood_pressure   = (intercept) + (slope) x dietary_salt_intake,  or
-# depression_score = (intercept) + (slope) x exercise_in_hours
+# BMI              = (intercept) + (slope) * exercise_in_hours,    or
+# blood_pressure   = (intercept) + (slope) * dietary_salt_intake,  or
+# depression_score = (intercept) + (slope) * exercise_in_hours
 
 ### to fit all of the models specified above, the syntax for R is simple:
 # lm(y ~ x, data = data_containing_xy)
 # [where y is response/outcome and x is predictor/independent variable]
 
 # the above regression model estimates the (intercept) and (slope) of
-# y = (intercept) + (slope) x exercise_in_hours
+# y = (intercept) + (slope) * x
 #
 # <also the e_i from before, but let's keep it simple>
 
@@ -50,9 +50,14 @@
 
 library("dplyr")
 library("ggplot2")
+
 # install.packages("betareg")
 library("betareg") # using this for the "StressAnxiety" dataset
 
+### package for assumption checking (thanks to Caitlin for finding this)
+# install.packages("performance")
+library("performance") 
+### will be using check_model() function from the performance package
 
 # ---- example_data_1 ----
 
@@ -107,8 +112,14 @@ stress_dat %>%
   geom_jitter(alpha = 0.5, width = 5, height = 0) +
   theme_bw())
 
-
+?cor
 cor(stress_dat)
+
+ct1 <- cor.test(stress_dat$stress, stress_dat$anxiety)
+str(ct1)
+ct1$p.value
+ct1$estimate
+
 
 
 # ---- fit_lm ----
@@ -142,29 +153,47 @@ summary(mod1)
 
 # (2) If `stress` increases, does the model predict `anxiety` will increase or 
 #   decrease (on average)?
+# increase!
 
 # (3) what is the estimated slope (b1 or m) coefficient?
+0.48
 
 # (4) What is the estimated intercept (b0 or c) coefficient?
+-3.41
 
 # (5) For every 1 unit increase in `stress`, 
 #   what is the estimated increase/decrease in `anxiety`?
+0.48
 
-# (6) What is the interpretation of the estimated intercept coefficient?
-
-# (7) What is the estimated regression line/formula?
+# (6) What is the estimated regression line/formula?
 
 # anxiety =  intercept + slope * stress
+# anxiety =  -3.64188 + 0.48303 * stress
 
 jitter_plot +
   geom_abline(intercept = -3.64188, slope = 0.48303, col = "dodgerblue")
 
+# (7) What is the interpretation of the estimated intercept coefficient?
+
+# anxiety =  -3.64188 + 0.48303 * stress
+# if stress == 0
+# then anxiety =  -3.64188 + 0.48303 * 0 = -3.64188 + 0 = -3.64188
+
 # (8) What is the predicted `anxiety` for a `stress` value of 35?
 
+# can use model equation:
+(anxiety_prediction =  -3.64188 + 0.48303 * (35))
+
+# or use function that does the hard work for you
 predict(mod1, newdata = data.frame(stress = 35))
 
-# (9) What is the model R^2?
+# (8a) sub-question: does the prediction agree with the plot of the regression line?
 
+# go up from 35 for stress (x-axis) and see the corresponding approx 13 value (y-axis)
+TRUE 
+
+# (9) What is the model R^2?
+0.4994
 
 
 
@@ -181,9 +210,12 @@ par(mfrow = c(2, 2))
 plot(mod1)
 par(mfrow = c(1, 1))
 
+# alternatively: use the performance package
+# much prettier with colours and gives hints for what you are looking for
+check_model(mod1) 
 
-
-
+### NOTE: I have saved the output of these diagnositic plots to the directory:
+# 2022-08-24_linear_regression/fig/
 
 # ---- not_covered ----
 
@@ -195,7 +227,6 @@ par(mfrow = c(1, 1))
 # testing multiple variables at once (anova() function)
 # observational data vs experimental (and "covariates")
 # repeated measures
-
 
 
 
@@ -229,6 +260,9 @@ stress_dat %>%
 # 3. Homoscedasticity: look at scale-location
 # 4. Normality: look at Q-Q plot
 
+check_model(mod2) 
+
+# alternatively using base R:
 par(mfrow = c(2, 2))
 plot(mod2)
 par(mfrow = c(1, 1))
