@@ -5,6 +5,10 @@ library("dplyr")
 library("ggplot2")
 library("readr")
 library("compositions") # for creating isometric log ratios further down in script
+library("performance") # package for model assumption checking
+library("GGally") # plotting pairwise scatterplots of variables
+
+
 
 # ---- load ----
 
@@ -26,7 +30,7 @@ fc
 
 # these are the compositional variables
 comp_parts <- fc[, c("sleep", "sed", "lpa", "mvpa")]
-comp_parts # have a peak
+head(comp_parts) # have a peak
 hist(rowSums(comp_parts)) # check they add up to 1440 minutes in the day
 
 # not all rows add up to 1440, so will proportionally adjust to make 1400
@@ -39,6 +43,21 @@ cbind(comp_parts, standardised_comp_parts)
 
 # update dataset with standardised 1440 per row
 fc[, c("sleep", "sed", "lpa", "mvpa")] <- standardised_comp_parts
+
+
+
+# ---- explore_data ----
+
+
+# before doing any analysis -- always explore the data!!
+# all models have assumptions, knowing what the data look like is a sanity check
+
+# summary stats:
+summary(fc)
+
+ggpairs(fc[, c("sleep", "sed", "lpa", "mvpa", "bmi")]) +
+  theme_bw()
+
 
 
 # ---- attempt_at_model ----
@@ -56,10 +75,15 @@ summary(fc_mod) # why is there NAs in there?
 fc_mod2 <- lm(bmi ~ sleep + sed + lpa, data = fc)
 summary(fc_mod2)
 
+check_model(fc_mod2) 
+
+
+
 # fit the model (substitution model) without "sleep"
 fc_mod3 <- lm(bmi ~ sed + lpa + mvpa, data = fc)
 summary(fc_mod3)
 
+check_model(fc_mod3) 
 
 # ---- workaround2 ----
 
@@ -98,5 +122,6 @@ fc_mod4 <- lm(bmi ~ ilr, data = fc_ilrs)
 summary(fc_mod4)
 anova(fc_mod4)
 
+check_model(fc_mod4) 
 
 

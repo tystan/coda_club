@@ -213,6 +213,7 @@ par(mfrow = c(1, 1))
 # alternatively: use the performance package
 # much prettier with colours and gives hints for what you are looking for
 check_model(mod1) 
+?check_model # details
 
 ### NOTE: I have saved the output of these diagnositic plots to the directory:
 # 2022-08-24_linear_regression/fig/
@@ -227,47 +228,5 @@ check_model(mod1)
 # testing multiple variables at once (anova() function)
 # observational data vs experimental (and "covariates")
 # repeated measures
-
-
-
-
-# ---- multiple_linear_regression ----
-
-# it's the same idea but just more predictor variables (and thus coefficients)
-# y_i = β_0 + β_1 x_ {1i} + β_2 x_{2i} + ... + β_p x_{pi} + e_i
-
-# adding another variable (fake but for illustration later on)
-set.seed(1234567)
-stress_dat <-
-  stress_dat %>%
-  mutate(
-    income = rchisq(n = n(), df = 50 / (anxiety / 100 + 1 + runif(n())))
-  )
-
-mod2 <- lm(anxiety ~ stress + income, data = stress_dat)
-summary(mod2)
-
-stress_dat %>%
-  ggplot(., aes(x = stress, y = anxiety, col = income)) +
-  geom_jitter(alpha = 0.75, width = 5, height = 0, size = 2.5) +
-  scale_color_distiller(palette = "Spectral") + 
-  theme_bw()
-
-### checking the model assumptions is the same:
-# 1. Independence of observations
-# 2. Linearity: look at residuals vs fitted 
-#    (technically should check residuals vs each predictor variable too)
-# 3. Homoscedasticity: look at scale-location
-# 4. Normality: look at Q-Q plot
-
-check_model(mod2) 
-
-# alternatively using base R:
-par(mfrow = c(2, 2))
-plot(mod2)
-par(mfrow = c(1, 1))
-
-
-
 
 
