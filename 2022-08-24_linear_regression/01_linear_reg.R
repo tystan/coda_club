@@ -185,7 +185,8 @@ jitter_plot +
 (anxiety_prediction =  -3.64188 + 0.48303 * (35))
 
 # or use function that does the hard work for you
-predict(mod1, newdata = data.frame(stress = 35))
+predict(mod1, newdata = data.frame(stress = 35), interval = "confidence")
+predict(mod1, newdata = data.frame(stress = 35), interval = "prediction")
 
 # (8a) sub-question: does the prediction agree with the plot of the regression line?
 
@@ -199,6 +200,8 @@ TRUE
 
 # ---- check_assumptions ----
 
+
+# residuals = actual values (y) - fitted values
 
 ### checking the model assumptions:
 # 1. Independence of observations
