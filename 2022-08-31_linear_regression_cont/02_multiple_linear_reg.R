@@ -118,6 +118,7 @@ summary(lm(anxiety ~ income, data = stress_dat))
 summary(lm(anxiety ~ sex, data = stress_dat))
 
 
+check_model(lm(anxiety ~ stress, data = stress_dat)) 
 # ---- multiple_linear_regression ----
 
 
@@ -168,23 +169,45 @@ summary(mod1)
 # (4) according to the regression formula above, all other things being equal,
 #     do men or women have higher predicted anxiety on average?
 
+# men as coef is positive
+
 # (5) What is the interpretation of the estimated intercept coefficient?
 
+# the model predicted mean anxiety for not-male, $0k income, 0 stress persons
+
 # (6) Is `income` a significant predictor of `anxiety`?
+
+0.0225 < 0.05 # TRUE
 
 # (7) If `income` increases, does the model predict `anxiety` will increase or 
 #   decrease (on average)?
 
+# decrease as `income` coef is negative (-0.15224)
+
 # (8) what is the estimated coefficient of `income`?
+
+-0.15224
 
 # (9) For every 1 unit increase in `income`, 
 #   what is the estimated increase/decrease in `anxiety`?
 
+-0.15224
+
 # (10) What is the predicted `anxiety` for a women with stress=35 and income=16?
+
+# anxiety = 
+  # 1.06536 + 0.46120 * (35) + -0.15224 * (16) + 2.31409 * (0) =
+  14.77152
+
+# (10(b)) same but male?
+
+# anxiety = 
+  # 1.06536 + 0.46120 * (35) + -0.15224 * (16) + 2.31409 * (1) =
+  17.08561
 
 # (11) What is the model R^2?
 
-
+0.5231
 
 # ---- check_assumptions ----
 
