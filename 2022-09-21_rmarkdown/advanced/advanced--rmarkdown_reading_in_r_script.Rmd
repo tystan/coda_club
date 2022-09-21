@@ -1,0 +1,19 @@
+---
+title: "title here"
+output: pdf_document
+---
+
+
+```{r, include = FALSE}
+knitr::read_chunk('scripts/my_script_for_markdown.R')
+```
+
+Run first chunk of `scripts/my_script_for_markdown.R` file ("`libs`")
+
+```{r, libs}
+```
+
+Run second chunk of `scripts/my_script_for_markdown.R` file ("`code_n_that`")
+
+```{r, code_n_that}
+```

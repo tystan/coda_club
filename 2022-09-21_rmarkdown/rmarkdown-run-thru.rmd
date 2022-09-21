@@ -1,0 +1,126 @@
+---
+title: "coda club live"
+author: "coda club"
+date: "2022-09-21"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '1'
+    number_sections: yes
+bibliography: refs.bib
+urlcolor: orange
+csl: "elsevier-vancouver.csl"
+---
+
+<!-- comments are like this -->
+
+# rmarkdown references (cheatsheets etc)
+
+
+1. [https://shiny.rstudio.com/articles/rm-cheatsheet.html](https://shiny.rstudio.com/articles/rm-cheatsheet.html). 
+1. [reference guide (pdf)](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)
+
+# this is a  title
+
+##### My third heading
+
+
+These are some of my favourite papers: [@smith2014; @dumuid2018] as well as [@mellow2022] and [@howlett2021; @ridgers2012; @miatke2021; @turnbull2022; @curtis2021; @matricciani2012]. 
+
+
+
+This is a website that definitely exists: [github yo](https://github.com). 
+
+
+**bold text**
+
+
+*italic*
+
+
+
+# dot points, numbered lists
+
+1. *kdjgfkjgfds*
+2. dfkjlsgsfd;lkg
+2. fjkgslgh
+
+* dfgdfgs
+* dfggdf
+* dfgdfg
+
+
+
+
+## tables
+
+| stat | value |
+|:-----:|:-----:|
+|  `dfggf` | 456546 |
+|      `dfggf2` |     456546+2 |
+
+
+# monospace
+
+code looking text `code_variables_etc`
+
+
+# let's look at some code
+
+Hey Ash, you already know this, but this is storing 10 in a variable `x`
+
+```{R, echo = TRUE, fig.width = 3}
+
+x <- 10
+x
+
+
+```
+
+Another chunk reading in data dynamically and doing stuff
+
+
+```{R, echo = TRUE, fig.width = 3}
+
+library("readr")
+library("knitr")
+
+hsb <- read_csv("dat/hsb2.csv", col_names = FALSE)
+hsb
+
+boxplot(hsb$X2, hsb$X3)
+
+
+```
+
+
+The third column has a mean of `r mean(hsb$X3)` (units are kgs)
+
+
+```{r}
+
+sub_hsb <- hsb[1:10, 1:4]
+sub_hsb
+kable(sub_hsb)
+```
+
+
+<!-- these are commments not to be rendered -->
+<!--
+```{R, include = FALSE}
+x <- 1:10
+y <- rnorm(10)
+plot(x, y)
+```
+
+```{R, eval = FALSE}
+x <- 1:10
+y <- rnorm(10)
+plot(x, y)
+```
+-->
+
+
+# References
+
+

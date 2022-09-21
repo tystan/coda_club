@@ -1,0 +1,60 @@
+---
+title: "Quarto template"
+format: 
+  pdf:
+    toc: true
+    highlight-style: atom-one
+editor: source
+---
+
+
+# Quarto vs Rmarkdown
+
+Note `Quarto` (`.qmd` file) is just a "new", more flexible `Rmarkdown` (`.rmd` file).
+
+The only difference I've noticed for our purposes, when including R code, is: 
+
+* instead of including code chunk options between the code chunk opening's curly braces "`{...}`", 
+* the options are specified in the lines below starting the line with "`#|`"
+
+So in Rmarkdown you might do the following (ignore the first comment character "`#`" on each line in the below code chunk):
+
+```{r, eval=FALSE}
+# <!-- Rmarkdown version -->
+#```{r, some_option = "option value", some_other_option = FALSE}
+# ... some code ...
+#```
+```
+
+You equivalently do (ignore the first comment character "`#`" on each line in the below code chunk):
+
+
+
+```{r, eval=FALSE}
+# <!-- Quarto version -->
+# ```{r}
+# #| some_option: "option value"
+# #| some_other_option: false
+# ... some code ...
+#```
+```
+
+## A more comprehensive list of differences
+
+[This FAQ page](https://quarto.org/docs/faq/rmarkdown.html)
+
+
+## An example
+
+If reading this from the pdf output - please see the `.qmd` code chunk to see what generates this code/ouput.
+
+```{r}
+#| include: true
+#| echo: true
+x <- 10
+x
+```
+
+
+
+

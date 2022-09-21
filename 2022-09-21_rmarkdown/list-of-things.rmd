@@ -1,13 +1,9 @@
 ---
-title: "list of things"
-author: "Ty Stanford"
-date: "`r Sys.Date()`"
+title: "list of rmarkdown things"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 just an r flavour of an existing markup system (markdown)
 
