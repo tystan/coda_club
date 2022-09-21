@@ -1,0 +1,60 @@
+---
+title: "list of things"
+author: "Ty Stanford"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+just an r flavour of an existing markup system (markdown)
+
+example on github:
+* https://raw.githubusercontent.com/tystan/coda_club/main/README.md (raw)
+* https://github.com/tystan/coda_club/blob/main/README.md (rendered)
+
+outputs are word, pdf or html (the engine behind that is pandoc for those wanting to dig deeper)
+https://rmarkdown.rstudio.com/lesson-2.html
+
+############# easy way to produce markdown docs ###############
+
+To make sure you have all the tools installed beforehand, here are the prerequisites:
+
+1. Have MS Word or Libre Office installed
+2. (Optional) If you want to produce PDF documents, have a LaTeX distribution installed (i.e., install MiKTeX for Windows. Note that that will take a while and takes ~3GB of drive space if I remember correctly)
+3. Have R installed
+4. Have RStudio installed
+5. Install the following R packages and their dependencies (run the following in R or RStudio):
+        install.packages(c("knitr", "rmarkdown"), dep = TRUE)
+
+
+
+YAML header
+
+title, bold, italic
+
+dot points, numbered lists
+
+tables
+
+links, figures
+
+code (not eval) `code_variables_etc`
+
+code chunks (assumed R but can specify python etc)
+```{R}
+# <code here>
+```
+(read in data as example)
+
+options for code: include, echo, asis, fig.width etc
+
+inline code `r print(10)`
+
+bibliogrphies, TOCs
+
+<!-- commenting -->
+
+
