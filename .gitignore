@@ -41,6 +41,8 @@ vignettes/*.pdf
 # get rid of html preview of README
 README.html
 
-# don't upload some data file
+# don't upload some data files
 2022-08-24_linear_regression/dat/Fairclough.csv
+2022-09-28_ggplot2-again/dat/*
+2022-09-28_ggplot2-again/fig/*
 
