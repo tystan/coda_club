@@ -1,0 +1,4 @@
+nothing to see here, this file just makes sure the /2022-11-16_ggir/results/ 
+folder is included in the `coda_club` github repository
+(the /2022-11-16_ggir/results/ folder is required for the 
+/2022-11-16_ggir/GGIR_for_RClub.R code to work)

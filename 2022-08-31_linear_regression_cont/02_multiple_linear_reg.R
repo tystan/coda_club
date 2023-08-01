@@ -56,6 +56,7 @@ library("GGally") # plotting pairwise scatterplots of variables
 
 # load data
 data("StressAnxiety", package = "betareg")
+?StressAnxiety
 
 stress_dat <- # create a copy we can play with (and changing units)
   as_tibble(StressAnxiety) %>%
@@ -86,6 +87,23 @@ stress_dat
 # note about factors/categorical variables:
 head(stress_dat[, "sex"])
 head(model.matrix(~ 0 + sex, data = stress_dat))
+
+stress_dat[["sex"]]
+class(stress_dat[["sex"]])
+# stress_dat[["sex"]] <- factor(stress_dat[["sex"]])
+stress_dat[["sex"]]
+class(stress_dat[["sex"]])
+
+
+# stress_dat[["sex"]] <- relevel(stress_dat[["sex"]], ref = "M")
+stress_dat[["sex"]]
+class(stress_dat[["sex"]])
+
+stress_dat[["sex"]]
+
+str(stress_dat)
+
+
 
 # ---- explore_data ----
 
@@ -119,6 +137,7 @@ summary(lm(anxiety ~ sex, data = stress_dat))
 
 
 check_model(lm(anxiety ~ stress, data = stress_dat)) 
+
 # ---- multiple_linear_regression ----
 
 

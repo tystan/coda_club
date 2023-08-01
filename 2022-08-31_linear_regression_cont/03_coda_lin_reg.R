@@ -31,6 +31,7 @@ fc
 # these are the compositional variables
 comp_parts <- fc[, c("sleep", "sed", "lpa", "mvpa")]
 head(comp_parts) # have a peak
+rowSums(comp_parts)
 hist(rowSums(comp_parts)) # check they add up to 1440 minutes in the day
 
 # not all rows add up to 1440, so will proportionally adjust to make 1400
@@ -68,6 +69,10 @@ fc_mod <- lm(bmi ~ sleep + sed + lpa + mvpa, data = fc)
 summary(fc_mod) # why is there NAs in there?
 
 
+
+fc_mod <- lm(bmi ~ mvpa + sleep + sed + lpa, data = fc)
+summary(fc_mod) # why is there NAs in there?
+
 # ---- workaround1 ----
 
 # fit the model (substitution model) without "mvpa"
@@ -84,6 +89,10 @@ fc_mod3 <- lm(bmi ~ sed + lpa + mvpa, data = fc)
 summary(fc_mod3)
 
 check_model(fc_mod3) 
+
+cbind(predict(fc_mod2), predict(fc_mod3))
+
+
 
 # ---- workaround2 ----
 
