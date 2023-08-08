@@ -68,17 +68,20 @@ sigma(lm(distance ~ age, data = orth_f)) ^ 2 # extraced from model instead of ou
 
 orth_f_age_fct <- 
   orth_f %>% 
+  # convert age to factor (categorical variable)
   mutate(age = factor(age))
 
 orth_f_age_fct
 orth_f_age_fct$age
 
+# change default level from "8" to "14"
 orth_f_age_fct <- 
   orth_f_age_fct %>% 
   mutate(age = relevel(age, ref = "14"))
 
 orth_f_age_fct$age
 
+# coefficients are relative to reference level
 summary(lm(distance ~ 1 + age, data = orth_f_age_fct))
 
 
