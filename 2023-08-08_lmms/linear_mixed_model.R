@@ -56,11 +56,30 @@ orth_f %>%
 
 ### what if we fit a linear regression as before? Why is this not appropriate?
 
-summary(lm(distance ~ age, data = orth_f))
+summary(lm(distance ~ 1 + age, data = orth_f))
 
 # fyi this is variance of difference between observed and predicted
 2.164 ^ 2 
 sigma(lm(distance ~ age, data = orth_f)) ^ 2 # extraced from model instead of output
+
+
+
+# ---- fit_standard_linear_regression_(with age as factor) ----
+
+orth_f_age_fct <- 
+  orth_f %>% 
+  mutate(age = factor(age))
+
+orth_f_age_fct
+orth_f_age_fct$age
+
+orth_f_age_fct <- 
+  orth_f_age_fct %>% 
+  mutate(age = relevel(age, ref = "14"))
+
+orth_f_age_fct$age
+
+summary(lm(distance ~ 1 + age, data = orth_f_age_fct))
 
 
 # ---- fit_linear_mixed_effects ----
@@ -131,7 +150,7 @@ orth_f_ranef %>% summarise(ranef_sd = sd(ran_int))
 orth_f %>% summarise(resid_sd = sd(resid_err))
 
 
-
+tail(orth_f, n = 4)
 
 
 # ---- different_models_for_full_data ----
