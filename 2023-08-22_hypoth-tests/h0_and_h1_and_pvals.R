@@ -3,8 +3,7 @@
 
 library("dplyr")
 library("ggplot2")
-library("ggthemes")
-library("forcats")
+
 
 # ---- example ----
 
@@ -15,10 +14,10 @@ library("forcats")
 # 7-day average daily physical activity times
 set.seed(1234)
 (pa_age20s <- round(rnorm(20, 25, 5)))
-(pa_age30s <- round(rnorm(20, 21, 3)))
+(pa_age30s <- round(rnorm(20, 25, 3)))
 
 # so to check our above question we could do a t-test:
-t.test(x = pa_age20s, y = pa_age30s)
+t.test(x = pa_age20s, y = pa_age30s, var.equal = TRUE)
 
 
 ### Questions
@@ -46,8 +45,8 @@ t.test(x = pa_age20s, y = pa_age30s)
 #     to build up/add to the "ARE" true when we have sufficient evidence)
 # 
 # e.g., we need to have evidence to:
-#  - show paracetamol is an effective analgesic we need to have evidence
-#  - demonstrate an intervention increases active time in adults we need evidence
+#  - show paracetamol is an effective analgesic 
+#  - demonstrate an intervention increases active time in adults 
 # 
 # put in a statistical framework we 
 #    0. construct a null hypothesis (labelled H0) as the "nothing going on" possibility
@@ -90,7 +89,78 @@ t.test(x = pa_age20s, y = pa_age30s)
 "p-value = the probability of obtaining the observed test statistic (or more extreme) if H0 is true"
 
 
-
-
-
 # "extraordinary claims require extraordinary evidence"
+
+
+# ---- more_examples ----
+
+pa_dat <-
+  tibble(
+    age_cat = rep(c("grp20", "grp30"), each = 20),
+    pa = c(pa_age20s, pa_age30s)
+  )
+pa_dat
+
+pa_dat$age_cat <- factor(pa_dat$age_cat)
+pa_dat$age_cat <- relevel(pa_dat$age_cat, ref = "grp30")
+
+
+pa_dat %>%
+  ggplot(aes(x = age_cat, y = pa, col = age_cat)) +
+  geom_jitter(width = 0.1) +
+  theme_bw()
+
+
+# pa = beta0 + beta1 * (age_cat == "30") + error
+summary(lm(pa ~ age_cat, data = pa_dat))
+
+# H0: beta1  = 0 (= mu1 - mu2)     v.     H1: beta1 =/= 0
+
+### NB the above hypothesis test is equivalent to the t-test:
+# H0: mu1 = mu2            v.     H1: mu1 =/= mu2
+# t.test(x = pa_age20s, y = pa_age30s, var.equal = TRUE)
+
+
+# ---- testing_more_than_2_means ----
+
+# add another age group
+set.seed(5678)
+(pa_age40s <- round(rnorm(20, 21, 5)))
+
+pa_dat <-
+  tibble(
+    age_cat = rep(c("grp20", "grp30", "grp40"), each = 20),
+    pa = c(pa_age20s, pa_age30s, pa_age40s)
+  )
+head(pa_dat)
+tail(pa_dat)
+
+pa_dat %>%
+  ggplot(aes(x = age_cat, y = pa, col = age_cat)) +
+  geom_jitter(width = 0.1) +
+  theme_bw()
+
+### Q: what are the null hypotheses of the p-values seen in the output below
+# note the model being fit is:
+# pa = beta0 + beta1 * (age_cat == "30") + beta2 * (age_cat == "40") + error
+threemean_lm <- lm(pa ~ age_cat, data = pa_dat)
+summary(threemean_lm)
+anova(threemean_lm)
+summary(aov(pa ~ age_cat, data = pa_dat))
+
+
+### now change the reference level to oldest group
+pa_dat$age_cat <- factor(pa_dat$age_cat)
+pa_dat$age_cat <- relevel(pa_dat$age_cat, ref = "grp40")
+
+### Q: what are the null hypotheses of the p-values seen in the output below
+# note the model being fit is:
+# pa = beta0 + beta1 * (age_cat == "20") + beta2 * (age_cat == "30") + error
+threemean_lm_v2 <- lm(pa ~ age_cat, data = pa_dat)
+summary(threemean_lm_v2)
+anova(threemean_lm_v2)
+summary(aov(pa ~ age_cat, data = pa_dat))
+
+
+
+
