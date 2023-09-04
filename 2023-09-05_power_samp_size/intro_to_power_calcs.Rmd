@@ -1,0 +1,91 @@
+---
+title: "Intro to power calcs"
+author: "UniSA ALH: CoDA_ClUB"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+![](../coda_club.png){width=5cm}
+
+
+
+# Last time
+
+
+* Null and alternative hypotheses, e.g., 
+$$
+H_0: \mu_A - \mu_B = 0 \;\;\; v. \;\;\; H_A: \mu_A - \mu_B \neq 0
+$$
+    + $\mu_A$, $\mu_B$ are *population parameters* (normally population means) we will never know, and
+    + stats only attempts to provide *sample estimates* (e.g., $\bar{x}_{A}$ or $\hat{\mu}_A$) of these population parameters
+* $p$-value definition:
+    + "The probability of observing the test statistic we have, or more ..., **if** $H_0$ is ..."
+<!-- "p-value = the probability of obtaining the observed test statistic (or more extreme) if H0 is true" -->
+
+
+# This time
+
+| Is a statistical analysis worth doing? |
+|:---:|
+| Does it tell us anything new? |
+| Is it worth the time, cost, negative effects, effort and/or opportunity cost? |
+
+We will consider two types of error related to $H_0$ and $H_A$:
+
+* Type I error: $\alpha$
+* Type II error: $\beta$ (not the regression beta confusingly)
+
+
+# Error and (statistical) power
+
+**There are two possibilities of truth in the stats universe we have created**
+
+| Possibility #1: **$H_0$ is true** | Possibility #2: **$H_A$ is true** ($H_0$ false) |
+|:---|:---|
+| Then we are acknowledging we have a built in $\alpha=0.05$ (Type I) error "rate" | Then we **want** $p\text{-val} < \alpha=0.05$ so we can reject $H_0$ in favour of $H_A$ |
+| | |
+| That is, there is a 0.05 probability of getting a $p\text{-val} < 0.05$ and rejecting $H_0$ (**incorrectly**) |so if we run an experiment and we retain $H_0$ (**incorrectly**) with $p\text{-val} > 0.05$ (this is the Type II error $\beta$ to be discussed |
+| | |
+| "Stats is a liar sometimes (5%)" | "stats is 100% wrong $\beta$% of the time" |
+    
+
+    
+* We never know if our situation is *Possibility #1* or *Possibility #2*! (Arggh)
+    + So our best plan of attack is making the two errors small
+    + Some good news is $\alpha=0.05$
+    + We just need to minimise $\beta$ which is the same as maximising $1-\beta$ = statistical power
+    + Statistical power can be thought of: 
+        - if $H_A$ is true and we carried out our study a super large amount of times, what proportion of times will we accept $H_A$?
+    + Statistical power is a function of random variation (uncertainty) and sample size
+
+
+
+# 5ive parameters
+
+To do a power calculation (also called sample size calculation), 
+
+* we need 4 of the 5 params below to calculate the remaining 1
+
+| Param | Description |
+|:---|:---|
+| $\alpha$ | Type I error |
+| $\beta$ | Type II error |
+| $\delta$ | The minimally important  |
+| $\sigma$ | Standard deviation of individuals in the outcome variable |
+| $n$ | Sample size (per group in most cases) |
+
+
+e.g. for a two independent group $t$-test the above quantities are approximately related by (magic and):
+
+$$
+n = 2 \sigma^2 \frac{\left(Z_{\alpha/2} + Z_{1-\beta}\right)^2}{\delta^2}
+$$
+
+
+
+
