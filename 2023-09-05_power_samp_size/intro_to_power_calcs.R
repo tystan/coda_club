@@ -3,11 +3,12 @@
 
 # install.packages("pwr")
 library("pwr")
+library("dplyr")
 ?`pwr-package` # package help file landing page
 
+
+
 # ---- hA_true_example ----
-
-
 
 
 
@@ -33,12 +34,16 @@ pa_dat <-
   )
 pa_dat
 
+# -------------------------------------------------------------------
 
 # so to check our above question we could do a t-test:
 boxplot(pa ~ age_cat, data = pa_dat)
+
 t.test(x = pa_age20s, y = pa_age30s, var.equal = TRUE)
 t.test(pa ~ age_cat, data = pa_dat, var.equal = TRUE)
 str(t.test(pa ~ age_cat, data = pa_dat, var.equal = TRUE))
+
+
 t.test(pa ~ age_cat, data = pa_dat, var.equal = TRUE)$p.value
 t.test(pa ~ age_cat, data = pa_dat, var.equal = TRUE)$p.value < 0.05
 
@@ -54,20 +59,32 @@ pwr.t.test(
 )
 
 
-reps <- 10
+
+pwr.t.test(
+  n = NULL, 
+  d = delta / sigma, 
+  sig.level = 0.05, 
+  power = 0.95, 
+  type = "two.sample",
+  alternative = "two.sided"
+)
+
+
+
+reps <- 10000
 (is_sig <- rep(NA, reps))
 # is_sig[3] <- "fdglskjhbgdf"
 # is_sig
-for (i in 1:reps) { # i <- 
+for (i in 1:reps) { # i <- 1
   pa_dat <-
     tibble(
       age_cat = rep(c("grp20", "grp30"), each = npg),
-      pa = c(round(rnorm(npg, 25, sigma)), round(rnorm(npg, 25 - delta, sigma)))
+      pa = c(rnorm(npg, 25, sigma), rnorm(npg, 25 - delta, sigma))
     )
   is_sig[i] <- t.test(pa ~ age_cat, data = pa_dat, var.equal = TRUE)$p.value < 0.05
 }
-is_sig
-as.integer(is_sig)
+# is_sig
+# as.integer(is_sig)
 sum(as.integer(is_sig))
 sum(as.integer(is_sig)) / reps
 
@@ -80,7 +97,8 @@ plot(
   ylab = "power estimate",
   xlab = "Number of simulations"
 )
-abline(h = 0.4560341, col = "orange")
+abline(h = 0.4560341, col = "orange") # orange line is pwr.t.test() power result
+
 
 
 # ---- h0_true_example ----
@@ -88,9 +106,6 @@ abline(h = 0.4560341, col = "orange")
 
 sigma <- 5
 n <- 20
-
-
-
 
 
 # we want to check whether people in Adelaide aged 20-29 spend more (or different) 
@@ -113,6 +128,21 @@ boxplot(pa ~ age_cat, data = pa_dat)
 t.test(x = pa_age20s, y = pa_age30s, var.equal = TRUE)
 
 
-
+reps <- 100
+(is_sig <- rep(NA, reps))
+# is_sig[3] <- "fdglskjhbgdf"
+# is_sig
+for (i in 1:reps) { # i <- 1
+  pa_dat <-
+    tibble(
+      age_cat = rep(c("grp20", "grp30"), each = npg),
+      pa = c(rnorm(npg, 25, sigma), rnorm(npg, 25, sigma))
+    )
+  is_sig[i] <- t.test(pa ~ age_cat, data = pa_dat, var.equal = TRUE)$p.value < 0.05
+}
+# is_sig
+# as.integer(is_sig)
+sum(as.integer(is_sig))
+sum(as.integer(is_sig)) / reps # should be close to alpha = 0.05
 
 

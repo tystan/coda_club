@@ -75,7 +75,7 @@ To do a power calculation (also called sample size calculation),
 |:---|:---|
 | $\alpha$ | Type I error |
 | $\beta$ | Type II error |
-| $\delta$ | The minimally important  |
+| $\delta$ | The minimally/clinically important difference |
 | $\sigma$ | Standard deviation of individuals in the outcome variable |
 | $n$ | Sample size (per group in most cases) |
 
