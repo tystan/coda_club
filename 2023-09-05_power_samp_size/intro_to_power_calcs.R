@@ -107,12 +107,15 @@ sum(as.integer(is_sig)) / reps
 
 plot(
   1:reps, 
-  cumsum(is_sig) / cumsum(rep(1, reps)), 
+  cumsum(is_sig) / (1:reps), 
   type = ifelse(reps <= 100, "p", "l"), 
-  ylab = "power estimate",
-  xlab = "Number of simulations"
+  ylab = "Power estimate",
+  xlab = "Number of simulations",
+  col = "grey50"
 )
-abline(h = power_result$power, col = "orange") # orange line is pwr.t.test() power result
+points(1:reps, cumsum(is_sig) / (1:reps), pch = 16, cex = 0.5)
+# orange line is pwr.t.test() power result
+abline(h = power_result$power, col = "orange") 
 
 
 
