@@ -22,6 +22,10 @@
 #    there is no e_i term! (the error is the diff between {0 or 1} and p_i)
 
 
+### Highly recommend:
+# https://stats.oarc.ucla.edu/r/dae/logit-regression/
+
+
 # ---- libs ----
 
 # install.packages("aod")
@@ -31,13 +35,32 @@ library("tidyr")
 library("ggplot2")
 library("ggthemes")
 
-library("aod")
+
 
 
 # ---- transform -----
 
+p <- 0.75
+
+# odds
+p / (1 - p)
+
+# log odds
+log(p / (1 - p))
+
+
 logis <- function(p) log(p / (1 - p))
+logis(0.75)
+logis(0.25)
+logis(0.50)
+
+
 inv_logis <- function(x) exp(x) / (1 + exp(x))
+inv_logis(-1.098612)
+inv_logis(+1.098612)
+inv_logis(0)
+
+
 
 p <- seq(0.01, 0.99, 0.01)
 plot(p, logis(p))
@@ -53,6 +76,7 @@ plot(p, logis(p))
 set.seed(12345)
 n <- 200
 
+# feel free to ignore this - making fake data :-)
 modelling_dat <- 
   tibble(
     gndr = sample(x = c("M", "F", "NB"), size = n, prob = c(0.4, 0.4, 0.2), replace = TRUE),
@@ -82,15 +106,9 @@ dat
 
 ggplot(dat, aes(x = age, y = phys_guides, col = gndr)) +
   geom_jitter(height = 0.1) +
+  # geom_point() +
   theme_bw() +
   scale_colour_colorblind()
-
-
-ggplot(dat, aes(x = age, y = phys_guides, col = gndr)) +
-  geom_jitter(height = 0.1) +
-  theme_bw() +
-  scale_colour_colorblind()
-
 
 
 dat <-
@@ -166,6 +184,20 @@ dat %>%
   scale_colour_colorblind()
 
 
+dat %>%
+  group_by(age_cat, gndr) %>%
+  summarise(
+    prop_guide = mean(phys_guides), 
+    n = n(),
+    .groups = "drop") %>%
+  ggplot(., aes(x = gndr, y = prop_guide, col = gndr)) +
+  geom_point() +
+  geom_label(aes(label = n)) +
+  facet_wrap(~ age_cat, nrow = 1) +
+  theme_bw() +
+  scale_colour_colorblind()
+
+
 # ---- model ----
 
 
@@ -197,8 +229,8 @@ anova(logis_mod1, logis_mod3, test = "Chisq")
 mod1_preds <-
   dat %>%
   mutate(
-    mod_pred_logodds = predict.glm(logis_mod1, type = "link"),
-    mod_pred_probs = predict.glm(logis_mod1, type = "response")
+    mod_pred_logodds = predict.glm(logis_mod1, type = "link"), # log-odds
+    mod_pred_probs = predict.glm(logis_mod1, type = "response") # probalities
   )
 
 mod1_preds
