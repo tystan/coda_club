@@ -1,0 +1,183 @@
+---
+title: "CoDA fun(dementals): the simplex space"
+author: "Ty Stanford + UniSA ALH"
+format: 
+  revealjs:
+    theme: dark
+---
+
+```{r setup}
+#| include: false
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{R}
+#| include: false
+knitr::read_chunk('mk_comp_plots.R')
+```
+
+```{R libs}
+#| include: false
+```
+
+```{R func}
+#| include: false
+```
+
+
+## Compositional data {background-color="white"}
+
+The *simplex* is a fancy way of saying:
+                        "where compositional data live"
+
+
+Also fancy maths notation (apologies):
+$$
+\mathcal{S}^D = 
+\left\{   
+\left(x_1, x_2, \ldots, x_D \right) \; \middle| \; \sum_{i=1}^D x_i = \kappa; x_i > 0
+\right\}
+$$
+
+
+
+
+
+## Example: two compositional parts {background-color="white"}
+
+
+
+
+
+e.g., pairs of values that add up to the 1440 minutes in a day
+
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+```{R D_2}
+#| echo: false
+```
+:::
+
+::: {.column width="60%"}
+```{R D_2_plot1}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 5
+#| fig-keep: 'all'
+```
+:::
+
+::::
+
+
+These data are on/in the "2-Simplex"
+
+$$
+\mathcal{S}^2 = 
+\left\{   
+\left(x_1, x_2 \right) \; \middle| \; x_1 + x_2 = 1440, 0 < x_1, x_2 < 1440
+\right\}
+$$
+
+
+
+## {background-color="white"}
+
+Example data: two compositional parts 
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+```{R D_2}
+#| echo: false
+```
+:::
+
+::: {.column width="60%"}
+```{R D_2_plot2}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 5
+#| fig-keep: 'all'
+```
+:::
+
+::::
+
+
+
+
+## Example: three compositional parts {background-color="white"}
+
+
+
+
+
+e.g., triplets of values that add up to the 1440 minutes in a day
+
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{R D_3}
+#| echo: false
+```
+:::
+
+::: {.column width="50%"}
+```{R D_3_plot1}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 5
+#| fig-keep: 'all'
+```
+:::
+
+::::
+
+These data are on/in the "3-Simplex"
+
+$$
+\mathcal{S}^3 = 
+\left\{   
+\left(x_1, x_2, x_3 \right) \; \middle| \; x_1 + x_2 + x_3 = 1440, x_i>0
+\right\}
+$$
+
+
+
+## {background-color="white"}
+
+Example data: three compositional parts 
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{R D_3}
+#| echo: false
+```
+:::
+
+::: {.column width="50%"}
+```{R D_3_plot2}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 5
+#| fig-keep: 'all'
+```
+:::
+
+::::
+
+
+
+
+
+
+
