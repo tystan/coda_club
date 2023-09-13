@@ -24,6 +24,7 @@ knitr::read_chunk('mk_comp_plots.R')
 #| include: false
 ```
 
+# Visualising data in the simplex
 
 ## Compositional data {background-color="white"}
 
@@ -35,10 +36,17 @@ Also fancy maths notation (apologies):
 $$
 \mathcal{S}^D = 
 \left\{   
-\left(x_1, x_2, \ldots, x_D \right) \; \middle| \; \sum_{i=1}^D x_i = \kappa; x_i > 0
+\left(x_1, x_2, \ldots, x_D \right) \; \middle| \; \sum_{i=1}^D x_i = \kappa; x_i \geq 0
 \right\}
 $$
 
+
+The simplex is the hypothetical set containing all possible assortments of $D$ values *such that* (the "|") the $D$ values add to a constant (e.g., 1 day, 24 hours, 100%, etc)
+
+- and none of the $D$ values are negative
+
+
+<!-- - The $D$ variables are called *compositional parts* -->
 
 
 
@@ -49,7 +57,7 @@ $$
 
 
 
-e.g., pairs of values that add up to the 1440 minutes in a day
+<!-- e.g., pairs of values that add up to the 1440 minutes in a day -->
 
 
 :::: {.columns}
@@ -74,13 +82,10 @@ e.g., pairs of values that add up to the 1440 minutes in a day
 
 
 These data are on/in the "2-Simplex"
-
-$$
-\mathcal{S}^2 = 
+$\mathcal{S}^2 = 
 \left\{   
-\left(x_1, x_2 \right) \; \middle| \; x_1 + x_2 = 1440, 0 < x_1, x_2 < 1440
-\right\}
-$$
+\left(x_1, x_2 \right) \; \middle| \; x_1 + x_2 = 1440; 0 < x_1, x_2 < 1440
+\right\}$
 
 
 
@@ -117,7 +122,7 @@ Example data: two compositional parts
 
 
 
-e.g., triplets of values that add up to the 1440 minutes in a day
+<!-- e.g., triplets of values that add up to the 1440 minutes in a day -->
 
 
 :::: {.columns}
@@ -141,31 +146,52 @@ e.g., triplets of values that add up to the 1440 minutes in a day
 ::::
 
 These data are on/in the "3-Simplex"
-
-$$
-\mathcal{S}^3 = 
+$\mathcal{S}^3 = 
 \left\{   
-\left(x_1, x_2, x_3 \right) \; \middle| \; x_1 + x_2 + x_3 = 1440, x_i>0
-\right\}
-$$
+\left(x_1, x_2, x_3 \right) \; \middle| \; x_1 + x_2 + x_3 = 1440; x_i>0
+\right\}$
 
 
 
 ## {background-color="white"}
 
-Example data: three compositional parts 
+Plotting three compositional parts 
+
+
+```{R D_3_plot2}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 10
+#| out-width: "760px"
+#| out-height: "633px"
+#| fig-keep: 'all'
+```
+
+
+
+
+
+
+## Example: four compositional parts {background-color="white"}
+
+
+
+
+
+<!-- e.g., 4-tuples of values that add up to the 1440 minutes in a day -->
+
 
 :::: {.columns}
 
-::: {.column width="50%"}
+::: {.column width="60%"}
 
-```{R D_3}
+```{R D_4}
 #| echo: false
 ```
 :::
 
-::: {.column width="50%"}
-```{R D_3_plot2}
+::: {.column width="40%"}
+```{R D_4_plot1}
 #| echo: false
 #| fig-width: 5
 #| fig-height: 5
@@ -174,6 +200,210 @@ Example data: three compositional parts
 :::
 
 ::::
+
+These data are on/in the "4-Simplex"
+$\mathcal{S}^4 = 
+\left\{   
+\left(x_1, x_2, x_3, x_4 \right) \; \middle| \; x_1 + x_2 + x_3 + x_4 = 1440, x_i>0
+\right\}$
+
+
+
+## {background-color="white"}
+
+Plotting four compositional parts 
+
+
+```{R D_4_plot2}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 10
+#| out-width: "700px"
+#| out-height: "633px"
+#| fig-keep: 'all'
+```
+
+
+
+
+## {background-color="white"}
+
+Alternatively 
+
+
+```{R D_4_plot3}
+#| echo: false
+#| fig-width: 5.53
+#| fig-height: 5
+#| out-width: "700px"
+#| out-height: "633px"
+#| fig-keep: 'all'
+```
+
+
+
+
+
+
+## Five compositional parts {background-color="white"}
+
+
+```{R D_5_plot1}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+#| fig-keep: 'all'
+```
+
+
+
+## {background-color="white"}
+
+Alternatively
+
+```{R D_5_plot3}
+#| echo: false
+#| fig-width: 6.65
+#| fig-height: 6
+#| out-width: "760px"
+#| out-height: "633px"
+#| fig-keep: 'all'
+```
+
+
+
+# Caclulations on data in the simplex
+
+## The simplex is a special place {background-color="white"}
+
+Our usual $+$, $-$, $\times$ and $/$ we normally use don't work as well
+
+- they don't ensure the calculated values land back in the simplex
+- also worth noting that the compositions only contain "relative" information
+
+Note we can transform the compositional data using *isometric log ratios* (*ilr*s) to return to using our standard arithmetic operations
+
+##  {background-color="white"}
+
+Cutting to the chase:
+
+
+
+| standard operation | operation on simplex |
+|--------------------|----------------------|
+| $+$                | $\oplus$ = multiplication under *closure* |
+| $\times$ (or $\cdot$)  | $\odot$ = powering under *closure* |
+
+
+
+
+
+## What is this closure operation? {background-color="white"}
+
+
+Example:
+$$ \texttt{closure}\left((1, 2, 3)\right) = \left(\frac{1}{6}, \frac{2}{6}, \frac{3}{6} \right)$$
+$$ \texttt{closure}\left((0.1, 0.2, 0.3)\right) = \left(\frac{1}{6}, \frac{2}{6}, \frac{3}{6} \right)$$
+
+General form:
+
+$$\mathcal{C}\left((x_1, x_2, \ldots, x_D)\right) = \left(\frac{x_1}{\sum_{i=1}^D x_i}, \frac{x_2}{\sum_{i=1}^D x_i}, \dots, \frac{x_D}{\sum_{i=1}^D x_i} \right) $$
+
+
+## Compositional mean {background-color="white"}
+
+Q: What is the equivalent to the standard arithmetic mean
+
+$$\bar{x} = \frac{1}{n} \times (x_1 + x_2 + \ldots + x_n)?$$
+
+A: The compositional mean.
+
+- We just replace
+    + addition $\rightarrow$ multiplication under closure
+    + multiplication $\rightarrow$ powering under closure
+
+
+
+## By example {background-color="white"}
+
+
+
+```{R}
+
+ex_dat <-
+  data.frame(
+    sleep = c(0.4, 0.3, 0.5, 0.1),
+    sed   = c(0.5, 0.3, 0.3, 0.8),
+    pa    = c(0.1, 0.4, 0.2, 0.1)
+  )
+
+print(ex_dat)
+# kable(ex_dat)
+
+```
+
+Compositional mean:
+
+```{R}
+#| include: false
+clos <- function(x) x / sum(x)
+compmean <- function(x) prod(x)^(1/length(x))
+ex_dat %>%
+  summarise(across(everything(), compmean)) %>%
+  clos(.) %>%
+  kable(., digits = 2)
+
+```
+
+```{R}
+#| echo: TRUE
+#| code-line-numbers: false
+m1 <- (0.4 * 0.3 * 0.5 * 0.1) ^ (1/4)
+m2 <- (0.5 * 0.3 * 0.3 * 0.8) ^ (1/4)
+m3 <- (0.1 * 0.4 * 0.2 * 0.1) ^ (1/4)
+c(m1, m2, m3)                        # geometric mean
+c(m1, m2, m3) / sum(c(m1, m2, m3))   # compositional mean
+```
+
+## By example {background-color="white"}
+
+
+```{R}
+
+ex_dat <-
+  data.frame(
+    sleep = c(0.4, 0.3, 0.5, 0.1),
+    sed   = c(0.5, 0.3, 0.3, 0.8),
+    pa    = c(0.1, 0.4, 0.2, 0.1)
+  )
+
+print(ex_dat)
+# kable(ex_dat)
+
+```
+
+
+Arithmetic mean:
+
+```{R}
+#| include: false
+ex_dat %>%
+  summarise(across(everything(), mean)) %>%
+  kable(., digits = 3)
+```
+
+
+
+```{R}
+#| echo: TRUE
+#| code-line-numbers: false
+m1 <- (0.4 + 0.3 + 0.5 + 0.1) * (1/4)
+m2 <- (0.5 + 0.3 + 0.3 + 0.8) * (1/4)
+m3 <- (0.1 + 0.4 + 0.2 + 0.1) * (1/4)
+c(m1, m2, m3)
+c(m1, m2, m3) / sum(c(m1, m2, m3))
+```
+
 
 
 
