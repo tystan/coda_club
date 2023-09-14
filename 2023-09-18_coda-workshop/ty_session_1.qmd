@@ -1,5 +1,5 @@
 ---
-title: "CoDA fun(dementals): the simplex space"
+title: "CoDA fun(damentals): the simplex space"
 author: "Ty Stanford + UniSA ALH"
 format: 
   revealjs:
