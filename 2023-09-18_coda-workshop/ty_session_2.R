@@ -1,4 +1,32 @@
 
+
+
+# ---- pls_ignore ----
+
+# just for nicer plotting of colours
+add_alpha <- function(col, alpha = 1) {
+  apply(
+    sapply(col, col2rgb) / 255,
+    2, # by column
+    function(x) rgb(x[1], x[2], x[3], alpha = alpha)
+  )
+}
+
+#make colour scheme over numeric vector
+col_scheme_for_numeric_vector <- function(vec, alpha = 0.4) {
+  intervals <- seq(min(vec), max(vec), length = 11)
+  ints <- findInterval(vec, intervals, all.inside = TRUE)
+  gradient <- colorRampPalette(colors = rev(c("red", "blue")))
+  colours <- gradient(length(intervals))
+  outc_y_col <- add_alpha(colours[ints], alpha)
+  return(outc_y_col)
+}
+
+x <- rnorm(20)
+plot(1:20, x, col = col_scheme_for_numeric_vector(x), pch = 16, cex = 5)
+
+
+
 # ---- libs ----
 
 library("dplyr")        # tidyverse packages
@@ -70,13 +98,12 @@ summary(fc)
 ggpairs(fc[, c("sleep", "sed", "lpa", "mvpa", "bmi")]) +
   theme_bw()
 
-# thanks to: https://stackoverflow.com/questions/22255465/assign-colors-to-a-range-of-values
-# Use n equally spaced breaks to assign each value to n-1 equal sized bins 
-ii <- cut(fc$bmi, breaks = seq(min(fc$bmi), max(fc$bmi), len = 7), 
-          include.lowest = TRUE)
-# Use bin indices, ii, to select color from vector of n-1 equally spaced colors
-cols <- colorRampPalette(c("turquoise4", "grey50", "orange"))(6)[ii]
-plot(acomp(fc[, c("sleep", "sed", "lpa", "mvpa")]), col = cols, pch = 16)
+
+plot(
+  acomp(fc[, c("sleep", "sed", "lpa", "mvpa")]), 
+  col = col_scheme_for_numeric_vector(fc$bmi, 0.2), 
+  pch = 16
+)
 
 
 
