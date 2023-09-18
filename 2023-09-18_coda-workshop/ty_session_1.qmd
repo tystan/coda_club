@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```{R}
 #| include: false
-knitr::read_chunk('mk_comp_plots.R')
+knitr::read_chunk('ty_session_1.R')
 ```
 
 ```{R libs}
@@ -291,7 +291,7 @@ Cutting to the chase:
 
 | standard operation | operation on simplex |
 |--------------------|----------------------|
-| $+$                | $\oplus$ = multiplication under *closure* |
+| $+$                | $\oplus$ = multiplication under *closure* = "perturbation" |
 | $\times$ (or $\cdot$)  | $\odot$ = powering under *closure* |
 
 
