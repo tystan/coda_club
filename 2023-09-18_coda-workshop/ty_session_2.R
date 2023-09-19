@@ -22,9 +22,19 @@ col_scheme_for_numeric_vector <- function(vec, alpha = 0.4) {
   return(outc_y_col)
 }
 
-x <- rnorm(20)
-plot(1:20, x, col = col_scheme_for_numeric_vector(x), pch = 16, cex = 5)
+# testing
+n <- 100
+x <- rnorm(n)
+plot(
+  1:n, x, 
+  col = col_scheme_for_numeric_vector(x), 
+  pch = 16, cex = 5, bty = "n", axes = FALSE, xlab = "", ylab = ""
+)
 
+
+row_wise_closure <- function(y, clo_val = 1) {
+  clo_val * t(apply(y, 1, function(x) x / sum(x)))
+}
 
 
 # ---- libs ----
@@ -74,8 +84,8 @@ hist(rowSums(comp_parts)) # check they add up to 1440 minutes in the day
 
 # not all rows add up to 1440, so will proportionally adjust to make 1400
 # (ignore the code, don't need to understand)
-standardised_comp_parts <- 
-  1440 * t(apply(comp_parts, 1, function(x) x / sum(x)))
+standardised_comp_parts <- row_wise_closure(comp_parts, clo_val = 1440)
+
 
 # check old and new values
 cbind(comp_parts, standardised_comp_parts)
@@ -157,6 +167,11 @@ sbp_mat <-
       -1, +1,  0,
       -1, -1, +1,
       -1, -1, -1),
+      ### balance coordinates
+      # +1, +1,  0,
+      # +1, -1,  0,
+      # -1,  0, +1,
+      # -1,  0, -1),
     byrow = TRUE,
     ncol = 3,
     dimnames = list(comp_parts, ilr_nms)
@@ -167,6 +182,9 @@ sbp_mat
 V <- compositions::gsi.buildilrBase(sbp_mat)
 V # peak
 
+### default basis
+ilrBase(D = 4)
+
 ### fun properties
 # sum(V[, 1] ^ 2)      # unit length
 # sum(V[, 1] * V[, 2]) # orthogonal
@@ -176,7 +194,7 @@ ilr_vals <- ilr(fc[, comp_parts], V = V)
 head(ilr_vals)
 
 # check we agree with the above values
-cmp <- fc_ilrs[, comp_parts]
+cmp <- fc[, comp_parts]
 ilr1_check <- sqrt(3 / 4) * log(cmp[, 1] / ((cmp[, 2] * cmp[, 3] * cmp[, 4]) ^ (1/3)))
 ilr2_check <- sqrt(2 / 3) * log(cmp[, 2] / ((cmp[, 3] * cmp[, 4]) ^ (1/2)))
 ilr3_check <- sqrt(1 / 2) * log(cmp[, 3] / cmp[, 4])
@@ -187,9 +205,17 @@ head(cbind(ilr_vals$ilr1, ilr1_check))
      
 # add on ilrs to data.frame
 fc$ilr <- ilr_vals
+fc <- cbind(fc, ilr_vals) # optional not nested version
+
 # do the ilrs make sense compared to the original composition vars?
 head(fc)
+colnames(fc)
+head(fc)
 
+colnames(fc$ilr)
+fc$ilr
+fc$ilr.1
+fc$ilr[, 1]
 # compositions and bmi
 ggpairs(cbind(as.data.frame(ilr_vals), bmi = fc$bmi)) +
   theme_bw()
@@ -198,6 +224,7 @@ ggpairs(cbind(as.data.frame(ilr_vals), bmi = fc$bmi)) +
 
 # now fit an ilr model: bmi ~ ilr.1 + ilr.2 + ilr.3
 fc_mod_0 <- lm(bmi ~ ilr, data = fc)
+fc_mod_0 <- lm(bmi ~ cbind(ilr1, ilr2, ilr3), data = fc)
 anova(fc_mod_0)
 summary(fc_mod_0)
 
@@ -213,6 +240,8 @@ fc_mod_1 <-
 anova(fc_mod_1) # ordering of terms matters
 car::Anova(fc_mod_1, type = "II") # ordering of terms do not matter
 summary(fc_mod_1)
+AIC(fc_mod_1) # ?AIC
+BIC(fc_mod_1)
 
 check_model(fc_mod_1) 
 
@@ -273,6 +302,26 @@ plot_delta_comp(
   units_lab = "min"
 )
 
+
+# ---- manova ----
+
+# this is a statistical test of whether the average time-use 
+# compositions differ between sexes
+
+multivar_outc_mod <- 
+  manova(
+    cbind(ilr[, 1], ilr[, 2], ilr[, 3]) ~ sex, 
+    data = fc
+  )
+summary(multivar_outc_mod)
+
+# compositional means
+
+(ilr_f_mean <- colMeans(subset(fc$ilr, fc$sex == "Female")))
+(comp_f_mean <- 1440 * unclass(ilrInv(ilr_f_mean, V = V)))
+
+(ilr_m_mean <- colMeans(subset(fc$ilr, fc$sex == "Male")))
+(comp_m_mean <- 1440 * unclass(ilrInv(ilr_m_mean, V = V)))
 
 
 
@@ -415,9 +464,11 @@ plot(fc$ilr[, 3], predict(fc_mod_1_poly)); abline(h = 0)
 plot(fc$shuttles_20m, predict(fc_mod_1_poly)); abline(h = 0)
 par(mfrow = c(1, 1))
 
+# now asking the question: are the quadratic terms significant?
 
 anova(fc_mod_1, fc_mod_1_poly)
 
+# same check just another way to do it
 fc_mod_1_poly_null <- 
   update(
     fc_mod_1_poly, 
@@ -433,7 +484,7 @@ anova(fc_mod_1_poly_null, fc_mod_1_poly)
 fc %>% select(bmi, sleep, sed, lpa, mvpa)
 fc_mod <- lm(bmi ~ sleep + sed + lpa + mvpa, data = fc)
 summary(fc_mod) # why is there NAs in there?
-
+AIC(fc_mod)
 
 
 fc_mod <- lm(bmi ~ mvpa + sleep + sed + lpa, data = fc)
