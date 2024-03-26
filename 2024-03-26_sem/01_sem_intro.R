@@ -1,0 +1,219 @@
+
+# ---- preamble ----
+
+
+# ::::::::::::::::: #
+# ::: SEM ::: #
+# ::::::::::::::::: #
+
+# Structural equation modelling
+
+# ::::::::::::::::: #
+# ::: what is? ::: #
+# ::::::::::::::::: #
+
+# data analysis technique that handles data that can be conceptualised
+# in paths diagrams (fancy boi version: directed acyclic graph (DAG))
+# (is this related to (simple or multiple) linear regression? YAAS)
+
+
+# ::::::::::::::::: #
+# ::: why use? ::: #
+# ::::::::::::::::: #
+
+# multiple regression equations (intermediate outcomes that "predict" other outcomes)
+# latent variables
+# mediation (related to multiple regression equations: direct and indirect effects)
+# can use summary statistics instead of person level data
+# [almost certainly heaps more]
+
+# flow chart: 
+#    https://kevintshoemaker.github.io/NRES-746/SEM%20Models.png
+# also worth noting, not everyone loves SEMs: 
+#     https://en.wikipedia.org/wiki/Structural_equation_modeling#Controversies_and_Movements
+
+
+# ::::::::::::::::: #
+# ::: who use? ::: #
+# ::::::::::::::::: #
+
+# social sciences mainly (examples: psychology, education, economics, politics, business sciences, etc)
+#     https://link.springer.com/chapter/10.1007/978-3-030-80519-7_1/tables/1
+# (why? my guess: SEM allows analysis of complex relationships - people are complex)
+
+
+# ::::::::::::::::: #
+# ::: examples in research ::: #
+# ::::::::::::::::: #
+
+
+### the best and only one :-)
+# https://www.tandfonline.com/doi/full/10.1111/ajpy.12083
+
+### thanks to jaslie for this example:
+# https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3395924/
+
+# so many (screenshots shown, but references on request)
+
+# ::::::::::::::::: #
+# ::: references used ::: #
+# ::::::::::::::::: #
+
+# fantastic overview: 
+#    https://kevintshoemaker.github.io/NRES-746/SEM.RMarkdown.html
+# software in R: [lavaan]
+#    https://lavaan.ugent.be/tutorial.pdf
+#    https://lavaan.ugent.be/about/gettingstarted.html
+#    https://users.ugent.be/~yrosseel/lavaan/lavaan2.pdf
+#    https://www.jstatsoft.org/article/view/v048i02
+# UCLA as always doing their thing: 
+#    https://stats.oarc.ucla.edu/r/seminars/rsem/
+# deeper dive but fantastic lecture slides from a decade ago: 
+#    http://cda.psych.uiuc.edu/CovarianceStructureAnalysis/Lectures/
+# academic journal intros if you fancy yo: 
+#    [An Introduction to Structural Equation Modeling (2021)] 
+#        https://doi.org/10.1007/978-3-030-80519-7_1 
+#    [Structural equation modeling in medical research: a primer (2010)]
+#        https://doi.org/10.1186/1756-0500-3-267
+
+
+
+
+# ::::::::::::::::: #
+# ::: sem specific definitions ::: #
+# ::::::::::::::::: #
+
+
+
+
+# ::::::::::::::::: #
+# ::: when no use? ::: #
+# ::::::::::::::::: #
+
+# not assured of causality?
+
+
+# ::::::::::::::::: #
+# ::: assumptions? ::: #
+# ::::::::::::::::: #
+
+# multivariate normality? (sorta)
+# continuous variables? (sorta)
+
+
+
+# ---- libs ----
+
+# install.packages("lavaan")
+
+library("lavaan")
+
+library("readr")
+library("dplyr")
+library("tidyr")
+library("ggplot2")
+library("ggthemes")
+library("GGally")
+
+
+
+
+# ---- some_data ----
+
+### THANK YOU TO THESE AUTHORS FOR MAKING DATA PUBLIC!
+# Data are from:
+#   Mongin, D., García Romero, J., & Alvero Cruz, J. R. (2021). 
+#   Treadmill Maximal Exercise Tests from the Exercise Physiology 
+#   and Human Performance Lab of the University of Malaga (version 1.0.1). 
+#   PhysioNet. https://doi.org/10.13026/7ezk-j442.
+
+### licensing of the data:
+# https://physionet.org/content/treadmill-exercise-cardioresp/1.0.1/LICENSE.txt
+
+### (https://physionet.org/content/treadmill-exercise-cardioresp/1.0.1/#methods)
+# Methods
+#
+# The measurements were taken between 2008 and 2018. The athletes performed a
+# maximal Graded Exercise Testing (GET) on a PowerJog J series treadmill
+# connected to a CPX MedGraphics gas analyzer system (Medical Graphics, MN, USA)
+# with breath-by-breath measurements of respiratory parameters -including oxygen
+# consumption and pulmonary ventilation- and heart rate collected by a Mortara
+# 12-lead ECG device.
+#
+# The stress tests consisted of a continuous (ramping) or step-by-step
+# incremental effort. Most of the exercise phases are preceded by a warmup
+# period of walking at 5 km/h. When incremental, the step amplitudes range from
+# 0.5 to 1 km/h. The participants were asked to go beyond exhaustion, and the
+# test was considered maximal if the oxygen consumption was saturated. The
+# effort was then ceased, and to avoid vasovagal syncope, the treadmill speed
+# was set back to the initial 5 km/h speed, and the participant was asked to
+# walk.
+
+### data dictionary for full data
+# ID_test  	 |  	992 per ID
+# ID  	 |  	857
+# Age (years)  	 |  	27.10 [21.10, 36.32]
+# Weight (kg)  	 |  	73.00 [66.00, 80.23]
+# Height (cm)  	 |  	175.00 [170.00, 180.00]
+# Humidity (%)  	 |  	47.00 [42.00, 54.00]
+# Temperature (°C)  	 |  	22.90 [20.80, 24.40]
+# Sex = 1 (Female) (%)  	 |  	149 (15.0)
+# time  	 |  	Time since the measurement starts, in seconds
+# Speed  	 |  	Speed of the treadmill, in km/h
+# HR  	 |  	Heart rate, in beat per min
+# VO2  	 |  	Oxygen consumption, in mL/min
+# VCO2  	 |  	Carbon dioxide production, in mL/min
+# RR  	 |  	Respiration rate, in respiration per minute
+# VE  	 |  	Pulmonary ventilation, in L/min
+# ID  	 |  	Participant identification
+# ID_test  	 |  	Effort test identification
+
+
+
+# ---- from_little_things_big_things_grow ----
+
+
+# https://stats.oarc.ucla.edu/r/seminars/rsem/#s2
+
+
+### (simple) linear regression:
+
+# y_i = b0 + b1 x_i + e_i
+
+# where 
+#    y_i are continuous values
+#    e_i are normally distributed error/residuals
+
+
+
+maxhr <- 
+  read_csv(
+    "2024-03-26_sem/maxhr.csv"
+  )
+
+maxhr
+
+
+# pairwise plots of demographics
+ggpairs(
+  maxhr %>% select(Age, BMI, VO2) %>% na.omit(.), 
+  mapping = aes(alpha = 0.2)
+) + 
+  theme_bw() 
+
+
+
+
+m1 <-   '
+  # regressions
+    VO2 ~ 1 + Age
+  # variance (optional)
+    Age ~~ Age
+'
+
+# Next, we fit the model to the data using sem() from lavaan. Followed by a summary, including model fit.
+
+fit1 <- sem(m1, data=maxhr)
+summary(fit1, fit.measures=TRUE)
+
+
