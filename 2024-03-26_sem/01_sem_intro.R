@@ -106,7 +106,8 @@
 
 # install.packages("lavaan")
 
-library("lavaan")
+library("lavaan") # SEM + meditation analysis 
+library("semPlot") # SEM diagrams
 
 library("readr")
 library("dplyr")
@@ -193,27 +194,84 @@ maxhr <-
 
 maxhr
 
+# make VO2 version in litres
+maxhr$vo2 <- maxhr$VO2 / 1e+3
+
+
 
 # pairwise plots of demographics
-ggpairs(
-  maxhr %>% select(Age, BMI, VO2) %>% na.omit(.), 
-  mapping = aes(alpha = 0.2)
-) + 
+maxhr %>% 
+  select(Age, Weight, Height, Humidity, Temperature, VO2, HR) %>% 
+  na.omit(.) %>%
+  ggpairs(
+    ., 
+    mapping = aes(alpha = 0.2)
+  ) + 
   theme_bw() 
 
 
+# model the data using lm()
+
+lm_fit1 <- lm(VO2 ~ 1 + Weight, data = maxhr)
+
+summary(lm_fit1)
 
 
-m1 <-   '
+
+# model the data using sem() from lavaan
+
+sem1 <-   '
   # regressions
-    VO2 ~ 1 + Age
-  # variance (optional)
-    Age ~~ Age
+    VO2 ~ 1 + Weight
 '
 
-# Next, we fit the model to the data using sem() from lavaan. Followed by a summary, including model fit.
+maxhr_na_rm <- maxhr %>% select(VO2, Weight) %>% na.omit(.)
 
-fit1 <- sem(m1, data=maxhr)
-summary(fit1, fit.measures=TRUE)
+sem_fit1 <- sem(sem1, data = maxhr_na_rm)
+
+# sample.cov:
+# Numeric matrix. A sample variance-covariance matrix. The rownames
+# and/or colnames must contain the observed variable names. For a multiple group
+# analysis, a list with a variance-covariance matrix for each group. 
+# sample.mean
+# A sample mean vector.  For a multiple group analysis, a list with a mean vector
+# for each group.
+# sample.nobs	
+# Number of observations if the full data frame is missing and only sample 
+# moments are given. For a multiple group analysis, a list or a vector with 
+# the number of observations for each group.
+
+
+summary(sem_fit1, fit.measures = FALSE)
+summary(sem_fit1, fit.measures = TRUE)
+
+(samp_m <- colMeans(maxhr_na_rm, na.rm = TRUE))
+(samp_vc <- var(maxhr_na_rm, na.rm = TRUE))
+(samp_n <- nrow(maxhr_na_rm))
+
+# alternative way to fit
+sem_fit2 <- 
+  sem(
+    sem1, 
+    sample.cov = samp_vc, 
+    sample.mean = samp_m, 
+    sample.nobs = samp_n
+  )
+
+# same result!
+summary(sem_fit2, fit.measures = FALSE)
+
+
+# Plot the mediation diagram with path estimates
+semPaths(sem_fit1, intAtSide = TRUE)
+semPaths(sem_fit1, whatLabels = "est", style = "lisrel", intercepts = FALSE)
+semPaths(sem_fit1, what = "paths", residuals = TRUE)
+# Standardized estimates:
+semPaths(sem_fit1,"std","est", intAtSide=TRUE)
+
+
+
+
+
 
 
