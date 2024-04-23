@@ -104,7 +104,7 @@
 
 # ---- libs ----
 
-# install.packages("lavaan")
+# install.packages(c("lavaan", "semPlot")
 
 library("lavaan") # SEM + meditation analysis 
 library("semPlot") # SEM diagrams
@@ -173,10 +173,6 @@ library("GGally")
 
 # ---- from_little_things_big_things_grow ----
 
-
-# https://stats.oarc.ucla.edu/r/seminars/rsem/#s2
-
-
 ### (simple) linear regression:
 
 # y_i = b0 + b1 x_i + e_i
@@ -184,7 +180,14 @@ library("GGally")
 # where 
 #    y_i are continuous values
 #    e_i are normally distributed error/residuals
+#       e_i ~ N(0, sigma^2)
 
+
+# https://stats.oarc.ucla.edu/r/seminars/rsem/#s2
+
+# y_1 = alpha * 1 + gamma_1 * x_1 + 1 * upzeta_1
+#       upzeta_1 ~ N(0, psi_11)
+#       x_1 ~ N(0, phi_11)
 
 
 maxhr <- 
@@ -213,9 +216,10 @@ maxhr %>%
 # model the data using lm()
 
 lm_fit1 <- lm(VO2 ~ 1 + Weight, data = maxhr)
-
 summary(lm_fit1)
 
+lm_fit1a <- lm(vo2 ~ 1 + Weight, data = maxhr)
+summary(lm_fit1a)
 
 
 # model the data using sem() from lavaan
@@ -227,6 +231,7 @@ sem1 <-   '
 
 maxhr_na_rm <- maxhr %>% select(VO2, Weight) %>% na.omit(.)
 
+# sem_fit1 <- sem(sem1, data = maxhr)
 sem_fit1 <- sem(sem1, data = maxhr_na_rm)
 
 # sample.cov:
@@ -248,6 +253,8 @@ summary(sem_fit1, fit.measures = TRUE)
 (samp_m <- colMeans(maxhr_na_rm, na.rm = TRUE))
 (samp_vc <- var(maxhr_na_rm, na.rm = TRUE))
 (samp_n <- nrow(maxhr_na_rm))
+# cov = corr * sd1 * sd2
+
 
 # alternative way to fit
 sem_fit2 <- 
